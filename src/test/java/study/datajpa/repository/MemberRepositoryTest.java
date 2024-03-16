@@ -285,4 +285,51 @@ class MemberRepositoryTest {
     void callCustom() throws Exception {
         List<Member> result = memberRepository.findMemberCustom();
     }
+    
+    @Test
+    void projections() throws Exception {
+        //given
+        Team teamA = new Team("teamA");
+        em.persist(teamA);
+
+        Member m1 = new Member("m1", 0, teamA);
+        Member m2 = new Member("m2", 0, teamA);
+        em.persist(m1);
+        em.persist(m2);
+
+        em.flush();
+        em.clear();
+
+//        List<UsernameOnly> result = memberRepository.findProjectionsByUsername("m1");
+//        for (UsernameOnly usernameOnly : result) {
+//            System.out.println("usernameOnly = " + usernameOnly.getUsername());
+//        }
+
+        /**
+         * Class-based Projections
+         */
+//        List<UsernameOnlyDto> result = memberRepository.findProjections1ByUsername("m1");
+//        for (UsernameOnlyDto usernameOnlyDto : result) {
+//            System.out.println("usernameOnlyDto.getUsername() = " + usernameOnlyDto.getUsername());
+//        }
+
+        /**
+         * Dynamic Projections
+         */
+//        List<UsernameOnlyDto> result = memberRepository.findProjections2ByUsername("m1", UsernameOnlyDto.class);
+//        for (UsernameOnlyDto usernameOnlyDto : result) {
+//            System.out.println("usernameOnlyDto.getUsername() = " + usernameOnlyDto.getUsername());
+//        }
+
+        /**
+         * 중첩구조
+         */
+        List<NestedClosedProjections> result = memberRepository.findProjections2ByUsername("m1", NestedClosedProjections.class);
+        for (NestedClosedProjections nestedClosedProjections : result) {
+            String username = nestedClosedProjections.getUsername();
+            System.out.println("username = " + username);
+            String teamName = nestedClosedProjections.getTeam().getName();
+            System.out.println("teamName = " + teamName);
+        }
+    }
 }
