@@ -11,6 +11,7 @@ import study.datajpa.entity.Team;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -140,5 +141,30 @@ class MemberRepositoryTest {
         for (Member member : result) {
             System.out.println("member = " + member);
         }
+    }
+
+    @Test
+    void returnType() {
+        Member m1 = new Member("AAA", 10);
+        Member m2 = new Member("BBB", 20);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+
+        //값이 없는 경우 empty collection 반환 => .size() = 0
+        List<Member> aaa = memberRepository.findListByUsername("AAA");
+        System.out.println("aaa = " + aaa);
+
+        /**
+         * 단건 조회시 값이 없는 경우
+         * - 순수 JPA => NoResultException
+         * - Spring Data JPA => null 반환
+         */
+        Member bbb = memberRepository.findMemberByUsername("BBB");
+        System.out.println("bbb = " + bbb);
+
+        //값이 없는 경우 Optional.empty 반환
+        //값이 두개 이상인 경우 NonUniqueResultException 을 스프링 예외 IncorrectResultSizeDataAccessException 로 변환해서 반환
+        Optional<Member> optionalAAA = memberRepository.findOptionalByUsername("AAA");
+        System.out.println("optionalAAA = " + optionalAAA.get());
     }
 }
